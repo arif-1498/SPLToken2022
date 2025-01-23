@@ -1,0 +1,1 @@
+console.log("hello spl token 2022")
