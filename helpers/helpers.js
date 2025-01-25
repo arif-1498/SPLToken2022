@@ -1,20 +1,19 @@
 const fs = require("fs");
-const path = require("path");
 
-const paths = path.join(__dirname, "../Datas/datas.json");
-console.log("the path is :", paths);
+const path = "./Datas/Walets.json";
 
-function addKepairs(name, pubkey, secKey) {
+function addKepairs(name, pubkey, prvtkey) {
   try {
-    const keypair = {
-      name: name,
-      publicKeys: pubkey,
-      secretKeys: secKey,
+    const data = {
+      [name]: {
+        pubkeys: pubkey,
+        scretkey: prvtkey
+      },
     };
-    const datas = JSON.parse(fs.readFileSync(paths));
-    datas.wallets.push(keypair);
+    const datas = JSON.parse(fs.readFileSync(path));
+    datas.wallets.push(data)
     fs.writeFileSync(path, JSON.stringify(datas));
-    console.log("succesfully added sucessfully");
+    console.log("succesfully added keypairs in json");
   } catch (error) {
     console.log("unable to adde file : ", error);
   }
