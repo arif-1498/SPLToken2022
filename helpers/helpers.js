@@ -10,8 +10,10 @@ function addKepairs(name, pubkey, prvtkey) {
         scretkey: prvtkey
       },
     };
-    const datas = JSON.parse(fs.readFileSync(path));
-    datas.wallets.push(data)
+
+    const datas=JSON.parse(fs.readFileSync(path))
+    datas.Wallets.push(data)
+    
     fs.writeFileSync(path, JSON.stringify(datas));
     console.log("succesfully added keypairs in json");
   } catch (error) {

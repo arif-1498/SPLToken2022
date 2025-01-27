@@ -1,10 +1,9 @@
-const fs = require("fs");
-
-const datas = JSON.parse(fs.readFileSync("./Datas/Walets.json"));
-
-
-console.log("data are",datas.wallets[0])
+const web3=require("@solana/web3.js");
+const {Keypair}=web3;
+const keys=require("./Keypairs");
+const {payerSecretkey}=keys;
 
 
-//const payer=Uint8Array(datas.wallets.payer.seccretKeys);
-//console.log(payer)
+
+const payer=Keypair.fromSecretKey(new Uint8Array(payerSecretkey));
+console.log("payer:", payer)
