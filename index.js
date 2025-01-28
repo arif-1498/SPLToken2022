@@ -7,3 +7,5 @@ const {payerSecretkey}=keys;
 
 const payer=Keypair.fromSecretKey(new Uint8Array(payerSecretkey));
 console.log("payer:", payer)
+
+
