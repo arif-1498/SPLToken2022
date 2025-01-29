@@ -12,6 +12,7 @@ const {
   TOKEN_2022_PROGRAM_ID,
   MINT_SIZE,
   createInitializeMint2Instruction,
+  createInitializeInstruction,
   ExtensionType,
 } = Spltoken;
 const metaplex = require("@metaplex-foundation/mpl-token-metadata");
@@ -36,7 +37,23 @@ const mintkeypair = Keypair.fromSecretKey(mintSK);
 console.log("payer:", payer);
 console.log("mint keypair:", mintkeypair);
 
-const extensions = [ExtensionType.TransferFeeConfig];
+const metadataProgramId= new PublicKey(MPL_TOKEN_METADATA_PROGRAM_ID)
+  console.log( "mpl program id",MPL_TOKEN_METADATA_PROGRAM_ID)
+  const metadataAccount = PublicKey.findProgramAddressSync([
+    Buffer.from("metadata"),
+    metadataProgramId.toBuffer(),
+    mintkeypair.publicKey.toBuffer(),
+  ], metadataProgramId);
+
+  console.log("metdata account:", metadataAccount)
+
+  const metaDataPDA=metadataAccount[0];
+  console.log("metadata PDA:", metaDataPDA)
+
+
+/*
+(async () => {
+  const extensions = [ExtensionType.TransferFeeConfig];
 const mintlen = await Spltoken.getMintLen(extensions + MINT_SIZE);
 
 const fees = await connection.getMinimumBalanceForRentExemption(mintlen);
@@ -48,16 +65,6 @@ const mintAccountInstruction = SystemProgram.createAccount({
   lamports: fees,
   programId: TOKEN_2022_PROGRAM_ID,
 });
-
-const metadataAccount = PublicKey.findProgramAddressSync(
-  [
-    Buffer.from("metadata"),
-    MPL_TOKEN_METADATA_PROGRAM_ID.toBuffer(),
-    mintkeypair.publicKey.toBuffer(),
-  ],
-  MPL_TOKEN_METADATA_PROGRAM_ID
-)[0];
-
-
-
-(async () => {})();
+console.log("mint account instructuion:", mintAccountInstruction)
+})();
+*/
