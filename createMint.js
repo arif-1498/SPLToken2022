@@ -1,3 +1,7 @@
+
+const mplumi =require("@metaplex-foundation/umi-bundle-defaults")
+const {createUmi}=mplumi;
+
 const web3 = require("@solana/web3.js");
 const {
   Keypair,
@@ -13,15 +17,20 @@ const {
   MINT_SIZE,
   createInitializeMint2Instruction,
   createInitializeInstruction,
+  createInitializeTransferFeeConfigInstruction, 
+
   ExtensionType,
+  
 } = Spltoken;
 const metaplex = require("@metaplex-foundation/mpl-token-metadata");
-const { MPL_TOKEN_METADATA_PROGRAM_ID, createMetadataAccountV3 } = metaplex;
+const { MPL_TOKEN_METADATA_PROGRAM_ID, } = metaplex;
 const keys = require("./Keypairs");
 const airdrop = require("./airdrop");
 const connection = new Connection(clusterApiUrl("devnet"));
 const { SendSol } = airdrop;
 const { payerSecretkey, mintSecretkey } = keys;
+
+const umi =createUmi(clusterApiUrl("devnet"))
 
 const tokenmetadata = {
   name: "Pak Rupees Token",
@@ -51,7 +60,7 @@ const metadataProgramId= new PublicKey(MPL_TOKEN_METADATA_PROGRAM_ID)
   console.log("metadata PDA:", metaDataPDA)
 
 
-/*
+
 (async () => {
   const extensions = [ExtensionType.TransferFeeConfig];
 const mintlen = await Spltoken.getMintLen(extensions + MINT_SIZE);
@@ -66,5 +75,19 @@ const mintAccountInstruction = SystemProgram.createAccount({
   programId: TOKEN_2022_PROGRAM_ID,
 });
 console.log("mint account instructuion:", mintAccountInstruction)
+
+const initializeMintInstruction =createInitializeMint2Instruction(
+  mintkeypair.publicKey,
+  6, 
+  payer.publicKey, 
+  payer.publicKey, 
+  TOKEN_2022_PROGRAM_ID
+)
+
+
+const createMetadatainstruction =metaplex.createMasterEditionV3()
+
+const transactions = new  web3.Transaction().add()
+
 })();
-*/
+
