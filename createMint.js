@@ -16,11 +16,13 @@ const {
   createInitializeInstruction,
   createInitializeTransferFeeConfigInstruction,
   createInitializeMetadataPointerInstruction,
+  createInitializeMintInstruction,
   ExtensionType, getMint
 } = Spltoken;
 /*const metaplex = require("@metaplex-foundation/mpl-token-metadata");
 const { MPL_TOKEN_METADATA_PROGRAM_ID } = metaplex;*/
 const keys = require("./Keypairs");
+const metadata=require("@solana/spl-token-metadata");
 const airdrop = require("./airdrop");
 const connection = new Connection(clusterApiUrl("devnet"));
 const { SendSol, checkBalance } = airdrop;
@@ -28,12 +30,16 @@ const { payerSecretkey, mintSecretkey } = keys;
 
 
 
+/*const tokenmetadata = {
+  name: "Pak Rupees Token",
+  symbol: "PKRT",
+  uri: "https://ibb.co/znmNjyY",
+};*/
 const tokenmetadata = {
   name: "Pak Rupees Token",
   symbol: "PKRT",
   uri: "https://ibb.co/znmNjyY",
 };
-
 payerSK = new Uint8Array(payerSecretkey);
 mintSK = new Uint8Array(mintSecretkey);
 const payer = Keypair.fromSecretKey(payerSK);
@@ -50,7 +56,7 @@ console.log("mint keypair:", mintkeypair.publicKey.toBase58());
 
   const extensions = [
     ExtensionType.TransferFeeConfig,
-    ExtensionType.MetadataPointer,
+    
   ];
   const mintlen = await Spltoken.getMintLen(extensions);
   console.log("mint length is :", mintlen)
@@ -61,7 +67,7 @@ console.log("mint keypair:", mintkeypair.publicKey.toBase58());
    const mintInfo= await connection.getAccountInfo(mintkeypair.publicKey)
       console.log("mint info:", mintInfo);
 
-  /*const mintAccountInstruction = SystemProgram.createAccount({
+  const mintAccountInstruction = SystemProgram.createAccount({
     fromPubkey: payer.publicKey,
     newAccountPubkey: mintkeypair.publicKey,
     space: mintlen,
@@ -79,13 +85,13 @@ console.log("mint keypair:", mintkeypair.publicKey.toBase58());
     TOKEN_2022_PROGRAM_ID
   );
 
-  const metadataInstruction = createInitializeMetadataPointerInstruction(
+  /*const metadataInstruction = createInitializeMetadataPointerInstruction(
     mintkeypair.publicKey,
     payer.publicKey,
     mintkeypair.publicKey,
     TOKEN_2022_PROGRAM_ID
-  );
-  const initializeMintInstruction = createInitializeMint2Instruction(
+  );*/
+  const initializeMintInstruction = createInitializeMintInstruction(
     mintkeypair.publicKey,
     6,
     payer.publicKey,
@@ -93,7 +99,7 @@ console.log("mint keypair:", mintkeypair.publicKey.toBase58());
     TOKEN_2022_PROGRAM_ID
   );
 
-  const InitializeInstruction = createInitializeInstruction({
+  /*const InitializeInstruction = createInitializeInstruction({
     programId: TOKEN_2022_PROGRAM_ID,
     mint: mintkeypair.publicKey,
     metadata: mintkeypair.publicKey,
@@ -102,25 +108,25 @@ console.log("mint keypair:", mintkeypair.publicKey.toBase58());
     uri: tokenmetadata.uri,
     mintAuthority: payer.publicKey,
     updateAuthority: payer.publicKey,
-  });
+  });*/
 
 
 
   const transactions = new web3.Transaction().add(
-    
+    mintAccountInstruction, 
     tranferFeeConfig,
-    metadataInstruction,
     initializeMintInstruction,
-    InitializeInstruction,
-
+    
   );
+  
 
-  const signature = await web3.sendAndConfirmTransaction(connection, transactions, [payer, mintkeypair], undefined
-  )
+
+  const signature = await web3.sendAndConfirmTransaction(connection, transactions, [payer, mintkeypair], undefined)
 
   console.log(`🔗 Explorer URL: https://explorer.solana.com/tx/${signature}?cluster=devnet`);
   console.log("mint is : ", mintkeypair.publicKey);
-  console.log("payer is : ", payer.publicKey)*/
+  console.log("payer is : ", payer.publicKey)
+
 
 
 })();
