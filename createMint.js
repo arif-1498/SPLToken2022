@@ -16,14 +16,14 @@ const {
   createInitializeInstruction,
   createInitializeTransferFeeConfigInstruction,
   createInitializeMetadataPointerInstruction,
-  ExtensionType,
+  ExtensionType, getMint
 } = Spltoken;
 /*const metaplex = require("@metaplex-foundation/mpl-token-metadata");
 const { MPL_TOKEN_METADATA_PROGRAM_ID } = metaplex;*/
 const keys = require("./Keypairs");
 const airdrop = require("./airdrop");
 const connection = new Connection(clusterApiUrl("devnet"));
-const { SendSol } = airdrop;
+const { SendSol, checkBalance } = airdrop;
 const { payerSecretkey, mintSecretkey } = keys;
 
 
@@ -39,19 +39,29 @@ mintSK = new Uint8Array(mintSecretkey);
 const payer = Keypair.fromSecretKey(payerSK);
 const mintkeypair = Keypair.fromSecretKey(mintSK);
 
-console.log("payer:", payer);
-console.log("mint keypair:", mintkeypair);
+console.log("payer:", payer.publicKey.toBase58());
+console.log("mint keypair:", mintkeypair.publicKey.toBase58());
 
 (async () => {
+  //SendSol(payer.publicKey)
+  checkBalance(payer.publicKey)
+  checkBalance(mintkeypair.publicKey)
+
+
   const extensions = [
     ExtensionType.TransferFeeConfig,
     ExtensionType.MetadataPointer,
   ];
   const mintlen = await Spltoken.getMintLen(extensions);
-
+  console.log("mint length is :", mintlen)
   const fees = await connection.getMinimumBalanceForRentExemption(mintlen);
 
-  const mintAccountInstruction = SystemProgram.createAccount({
+  console.log("rent for mint account is:", fees / LAMPORTS_PER_SOL)
+
+   const mintInfo= await connection.getAccountInfo(mintkeypair.publicKey)
+      console.log("mint info:", mintInfo);
+
+  /*const mintAccountInstruction = SystemProgram.createAccount({
     fromPubkey: payer.publicKey,
     newAccountPubkey: mintkeypair.publicKey,
     space: mintlen,
@@ -59,7 +69,6 @@ console.log("mint keypair:", mintkeypair);
     programId: TOKEN_2022_PROGRAM_ID,
   });
 
-  console.log("mint account instructuion:", mintAccountInstruction);
 
   const tranferFeeConfig = createInitializeTransferFeeConfigInstruction(
     mintkeypair.publicKey,
@@ -95,34 +104,23 @@ console.log("mint keypair:", mintkeypair);
     updateAuthority: payer.publicKey,
   });
 
- 
+
 
   const transactions = new web3.Transaction().add(
-    mintAccountInstruction,
+    
     tranferFeeConfig,
-    metadataInstruction, 
-    initializeMintInstruction, 
-    InitializeInstruction, 
+    metadataInstruction,
+    initializeMintInstruction,
+    InitializeInstruction,
 
   );
 
-  const signature= await web3.sendAndConfirmTransaction(connection, transactions, [payer, mintkeypair], undefined
+  const signature = await web3.sendAndConfirmTransaction(connection, transactions, [payer, mintkeypair], undefined
   )
 
   console.log(`🔗 Explorer URL: https://explorer.solana.com/tx/${signature}?cluster=devnet`);
   console.log("mint is : ", mintkeypair.publicKey);
-  console.log("payer is : ", payer.publicKey)
+  console.log("payer is : ", payer.publicKey)*/
+
+
 })();
-
-/*const metadataProgramId= new PublicKey(MPL_TOKEN_METADATA_PROGRAM_ID)
-  console.log( "mpl program id",MPL_TOKEN_METADATA_PROGRAM_ID)
-  const metadataAccount = PublicKey.findProgramAddressSync([
-    Buffer.from("metadata"),
-    metadataProgramId.toBuffer(),
-    mintkeypair.publicKey.toBuffer(),
-  ], metadataProgramId);
-
-  console.log("metdata account:", metadataAccount)
-
-  const metaDataPDA=metadataAccount[0];
-  console.log("metadata PDA:", metaDataPDA)*/

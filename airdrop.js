@@ -14,7 +14,7 @@ async function SendSol(address, amount) {
 
 async function checkBalance(address){
     const balance= await connection.getBalance(address);
-    console.log("the balance is: ", balance)
+    console.log("the balance is: ", balance/LAMPORTS_PER_SOL)
 }
 
 module.exports = { SendSol, checkBalance };
